@@ -1,0 +1,434 @@
+<!doctype html>
+
+
+
+ <html class="no-js" lang=""> 
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Xi Chen</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Serif+Pro|Source+Sans+Pro:400,600" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" crossorigin="anonymous">
+
+  <link rel="stylesheet" href=https://aaron-xichen.github.io/css/main.css>
+  <link rel="stylesheet" href=https://aaron-xichen.github.io/css/magnific-popup.css>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+</script>
+
+</script>
+
+
+
+<html>
+  <body lang="en">
+  
+
+
+  <div id="main">
+    
+
+<div id="nav">
+  
+  <a href="https://aaron-xichen.github.io/img/head.jpg" class="image-link">
+    <img class="logo animated flipInY" src="https://aaron-xichen.github.io/img/head.jpg"/>
+  </a>
+  
+  
+  <ul>
+    
+      <li><a href="https://aaron-xichen.github.io/">
+          <span>Home</span>
+      </a></li>
+    
+      <li><a href="https://aaron-xichen.github.io/all/">
+          <span>All Articles</span>
+      </a></li>
+    
+  </ul>
+
+</div>
+
+    <h1 class="animated flipInX"><a href="https://aaron-xichen.github.io/posts/cmc1/">Combinatorial Mathematics Cookbook (I) </a></h1>
+    <p class="post-info animated fadeIn">300 Words | Approximately 1 Minutes Read | Last Modified on September 28, 2018
+    
+
+<h2 id="组合数学cookbook-上">组合数学Cookbook（上）</h2>
+
+<p>组合数学本质来讲就是提供一套方法论来<code>计数</code>，像排列 $P_n^m$ 和组合 $C_n^m$ ，都是数学家总结抽象发明的符号，凡是n个里面选出m个排成一列，就用<strong>排列</strong>; 凡是n个里面选出m个放在一堆，就用<strong>组合</strong>。以此为基础，各种各样高端的令人眼花缭乱的技巧被引入了组合数学，解决的问题也越来越复杂，从最原始的<code>格路问题</code>到后来的<code>整数拆分</code>, <code>六面体染色</code>等。</p>
+
+<p>值得注意的是，在组合数学里，非常强调的一点是<code>一一对应</code>。所谓一一对应，就是找到的计数方法能对应于原问题的所有可能的情况，即<strong>无重复无遗漏</strong>地将原始问题的情况罗列出来。这一点非常重要，因为在许多广泛使用的模型里面，如<code>放球模型</code>, <code>格路模型</code>, <code>Ferrers图像模型</code>等，如果无法实现情况的一一映射，则计数结果必然会出现误差。因此，这就要求我们在选择使用现有模型的过程中，一定要先 <em>思考问题的本质究竟是什么，然后用对应的工具对症下药</em> 。</p>
+
+<p>下面，笔者试着以自己的理解，从最基本的排列组合开始，慢慢引入母函数求解方法，接着回顾放球模型&hellip;. 顺着由浅入深的思路，介绍一下组合数学的知识图谱。囿于笔者眼界的局限性，难免错漏百出，有不正确之处，还望不吝指出。</p>
+
+<h3 id="1-基本排列与组合">1. 基本排列与组合</h3>
+
+<p>基本的排列组合问题自然不必赘述，如下两个问题明眼一看就知道答案</p>
+
+<blockquote>
+<p>Q1: m个男生和n个女生排成一列去紫荆铁板窗口打饭，请问有几种排队情况？</p>
+</blockquote>
+
+<p>或者</p>
+
+<blockquote>
+<p>Q2: 北京街道都看成方格的话，小明发现从北邮到清华要向西走m条街道，向北走n条街道，试问小明从北邮到清华最短的路径有多少条？</p>
+</blockquote>
+
+<p><strong>Q1</strong>非常显然，由于每个人是不一样的个体，因此方案数为 $A_{m+n}^{m+n}$，但是如果稍作修改，问</p>
+
+<blockquote>
+<p>Q3: m个男生和n各女生打完饭之后，围成一圈一起吃饭，试问有几种情况？</p>
+</blockquote>
+
+<p>这个时候就出现问题了，由于现在围成了一个圈，因此没有起始点了，不像Q1一样有队头，这种情况下，不难发现，如果继续沿用Q1的全排列，势必会产生大量重复，模型这个时候不能实现一一对对应了。仔细再分析，重复的来源在于旋转整个圈得到的其实是同一种结果，而 $A_{m+n}^{m+n}$ 却重复计数了$m+n$次。于是我们想到能不能消除这种旋转对称的影响，于是就得到了</p>
+
+<p><code>$$\frac{1}{m+n}A_{m+n}^{m+n}=A_{m+n-1}^{m+n-1}$$</code></p>
+
+<p>这个就是<code>圆排列</code>，和原始的线排列比起来，就是多除了一个总元素个数。</p>
+
+<p><strong>Q2</strong>就是著名的<code>格路模型</code>，首先最短路径的诉求下小明肯定不会走回头路，换句话说，小明肯定不会往东或者南走，于是，问题就转化为了小明在$m+n$次的前进选择上，哪m次选择了往西(或者哪n次往北)走了一个街区，如下图所示？一旦这m次(或者n次)选择确定了之后，一种方案就随之确定，并且与原问题相比，无重复无遗漏。于是我们得到了路径的条数为$C_{m+n}^m$
+<img src="https://aaron-xichen.github.io/posts/cmc1/1421691030648.png" alt="AA" /></p>
+
+<h3 id="2-性感的母函数之婀娜多姿">2.性感的母函数之婀娜多姿</h3>
+
+<p>前文举了两个简单的排列组合例子，想必已经一窥其中的奥秘，下面由此为基础，首先抛出若干引申的问题，包括<strong>可重组合</strong>，<strong>多重组合</strong>，<strong>可重排列</strong>和<strong>多重排列</strong>，同时介绍如何利用<strong>母函数</strong>的技巧把这些问题一网打尽，并且解释如何用母函数统一解决<strong>放球模型</strong>中的后四种情况。</p>
+
+<h4 id="2-1-可重组合">2.1 可重组合</h4>
+
+<p>还是以吃为例，请看一例：</p>
+
+<blockquote>
+<p>Q4: 小明为了复习组合数学，3天3夜没有吃饭，今天上午终于坚持到了收卷前的最后一分钟，立马凶神恶煞地冲到紫荆二楼铁板窗口，准备海吃一顿。假设目前只有供应无上限的牛肉和羊肉两种肉，并且肉按两卖，小明打算狂吃10两肉，请问有几种方案？</p>
+</blockquote>
+
+<p>可重组合，对应英文的<strong>Combination with repetition</strong>，也就是说，允许重(sui)复(yi)取相同元素进行组合，回到Q4的例子里，可重集就是牛肉和羊肉，并且<strong>无上限</strong>。为了让问题更加具体，再看一例：</p>
+
+<blockquote>
+<p>Q5: 请问不定方程 $x_1+x_2+&hellip;+x_m=n$ 一共有多少组非负整数解？</p>
+</blockquote>
+
+<p>Q4问题并不难，大不了用最原始的方法依次枚举呗，但是如果单纯的枚举，变量一多，看到Q5，顿时就傻眼了&hellip;数学的美妙之处在于<strong>将本质抽象映射到基本的若干模型上</strong>，为了完美地解决Q4和Q5，首先介绍一种非母函数方法——<strong>隔板模型</strong>。</p>
+
+<p>我们看Q5，该如何解决这个问题呢？不妨这样思考，把n个元素排成一列，在形成的间隙中随机地插入m-1个隔板，势必能把n个元素分成m堆，这样从左往右依次把第i堆的小球分配给 $x_i$ ，这样这个任务就无重复无遗漏的完成了。再转换一下，把m-1个隔板插入n个元素的过程等效于把这一共n+m-1个元素进行组合，只要确定其中m-1个隔板的位置，那么各隔板两端的小球数量就确定了。按照这个思路，我们得出了</p>
+
+<p>$$C_{n+m-1}^{m-1}$$</p>
+
+<p>有人可能会说，这么转换好麻烦呀，什么球呀堆呀的，有没有统一的无脑方法啊。很幸运，答案是的确存在，这就是<strong>母函数</strong>。</p>
+
+<p>引入母函数之前，将Q5等效转换原始的<strong>放球模型</strong>，以方便统一理解：</p>
+
+<blockquote>
+<p>Q6: n个相同的小球放入m个有标志的盒子里，请问有多少种放法？</p>
+</blockquote>
+
+<p>不加证明地直接给出母函数的表达式：</p>
+
+<p>$$G(x)=(1+x+x^2+&hellip;+x^n+&hellip;)^m$$</p>
+
+<p>这里有相同的m项进行累乘，单独观察每一项，对应于每一个盒子里的放球情况，幂次的意义是说当前盒子里最终放了几个球，比如$x_2$就是当前盒子里有2个球；而加法表示所有情况<strong>或</strong>的关系，即只能发生其中的一种，比如$x_1+x_2$表示当前盒子要么有1个球，要么有2个球，两种情况取其一。明眼的读者应该已经发现，一共就只有n个球，表达式中幂次大于n的项，比如$x^{n+1}$等是不可能发生的呀。是的，的确是不可能发生，但是加上是<strong>no harm</strong>的，而且这么做不仅没有坏处，还有很多<strong>benefits</strong>，最直接的好处就是<strong>无穷等比级数</strong>是有简洁的表达式的。</p>
+
+<p>于是，我们继续运算下去，得到：
+$$G(x)=1/(1-x)^m=(1-x)^{-m}$$</p>
+
+<p>接下来的没有什么特别的地方，利用<a href="http://zh.wikipedia.org/wiki/%E4%BA%8C%E9%A1%B9%E5%BC%8F%E5%AE%9A%E7%90%86"><strong>广义二项式定理</strong></a>直接做展开，得到如下表达式：</p>
+
+<p><code>$$G(x)=\sum_{r=0}^{\infty}C_{m+r-1}^rx^r$$</code></p>
+
+<p>其中Q6要求的就是$x^n$对应的系数$C<em>{m+n-1}^n=C</em>{m+n-1}^{m-1}$，与前文表达式完全一致！而且不用动脑，直接一顿狂算就行了，真是省事儿。</p>
+
+<p>有了前面的成功经验，不禁让人浮想联翩，其他问题能不能都用母函数给解决了呢？</p>
+
+<h4 id="2-2-多重组合">2.2 多重组合</h4>
+
+<blockquote>
+<p>Q7: 紧接Q4，食堂阿姨一听小明要10两肉，顿时一惊，心想要是吃出人命可担不起呀，于是灵机一动，跟小明说：“这位小同学你今天来得太早啦，肉还没有完全到货，只有2两猪肉和3两牛肉，实在不好意思呀。” 小明一听，略感不爽，瞅瞅了旁边凉菜窗口的大鸡腿，决定只要3两肉，外加一个大鸡腿。请问这个时候小明在铁板窗口的选肉有多少种配菜方案？</p>
+</blockquote>
+
+<p>一旦限制了元素的数量，就从可重组合变成了多重组合，对应英文为<strong>Combination of multiset</strong>，同样的，我们也可以转化为<strong>方程非负整数解模型</strong>和<strong>放球模型</strong>，如下所示。</p>
+
+<blockquote>
+<p>Q8: 请问不定方程$x_1+x_2=3$有多少组非负整数解，其中$0 \leq x_1 \leq 2$且$0 \leq x_2 \leq 3$</p>
+</blockquote>
+
+<p>以及</p>
+
+<blockquote>
+<p>Q9: 3个相同的球放入2个有标志的盒子里，其中规定第一个盒子不能超过2个，第二个盒子不能超过3个，请问一共有多少种方案？</p>
+</blockquote>
+
+<p>继续用母函数，得到</p>
+
+<p>$$G(x)=(1+x^1+x^2)(1+x^1+x^2+x^3)$$</p>
+
+<p>这下可好，无法利用无穷幂级数的特性了，那就暴力破解吧，多项式全部展开然后同类项合并，其中$x^3$的系数就是最终的方案数。但是，如果小球和盒子数量都增加的话，那暴力破解的方法代价将会相当的大。这是属于不按套路出牌的母函数，没有写成无穷项的形式，但是思想与原始母函数一脉相承。</p>
+
+<p>此外，对于Q8，除了用母函数，另一个比较值得推崇的高大上方法是<strong>容斥原理</strong>，这里先卖个关子，后面我们再回头介绍这种解法。</p>
+
+<h4 id="2-3-可重排列">2.3 可重排列</h4>
+
+<p>人类有个习惯，每每发现一种新工具，就倾向于泛滥使用其功能。作为其中愚蠢一类的代表，我倾向于用一种工具解决所有问题，当然，大家可别学我，各司其职才是正道。一个自然而然的问题，母函数能解决<strong>可重排列</strong>问题吗？</p>
+
+<p>类似于<strong>可重组合</strong>，可重排列就是无限制地从一堆元素中挑选若干个排成一列，看下一例。</p>
+
+<blockquote>
+<p>Q10: 小明陪弟弟玩多米诺骨牌游戏，弟弟是土豪大学毕业的，一共有红黑两种骨牌，数量数不清。请问如果要排成长度为3的队列，有多少种方案？</p>
+</blockquote>
+
+<p>这个问题和Q4小明吃铁板问题不同的地方是Q10需要规定选出元素的顺序，这样一来，原来的母函数无法直接体现出位置顺序的信息，于是引入了<strong>指数型母函数</strong>。</p>
+
+<p>首先用常规思维来思考如何解决这题，既然要求选出的队列长度为3，这样红黑两种骨牌的组合无非</p>
+
+<p>$$(0,3), (1,2), (2,1), (3,0)$$</p>
+
+<p>写出完整的表达式，得到：</p>
+
+<p>$$3!(\frac{1}{0!3!}+\frac{1}{1!2!}+\frac{1}{2!1!}+\frac{1}{3!0!})$$</p>
+
+<p>而如果是多重组合的话，则为：</p>
+
+<p>$$1 + 1 + 1 + 1$$</p>
+
+<p>对比后得到启发灵感一现，得到指数型母函数：</p>
+
+<p>$$G(x)=(1+\frac{x}{1!}+\frac{x^2}{2!}+&hellip;\frac{x^k}{k!}+&hellip;)^2$$</p>
+
+<p>对比原始的母函数，发现多了分母的阶乘项，同时在最终的系数确定的时候，不同于原始母函数中选取$x^{3}$的系数，在这里我们选取的是$x^{3}/3!$，为的就是分离出$3!$，因为$x^<sup>3</sup>&frasl;<sub>3</sub>!*3!=x^3$。注意到括号内的无穷级数其实为$e^x$的泰勒展开，因此可以迅速计算出$G(x)=e^{2x}$，再泰勒展开，得到答案为$2^3=8$</p>
+
+<p>母函数再一次展现了其优越的姿态，换了个侧面还是那么美。</p>
+
+<h4 id="2-4-多重排列">2.4 多重排列</h4>
+
+<p>与多重组合一样，这个时候元素的个数出现了限制，请看下题。</p>
+
+<blockquote>
+<p>Q11: 小明看弟弟的多米诺骨牌如此有趣，回家后就嚷着要爸爸妈妈买，无奈小明是贫困大学毕业的，只买了半箱的二手骨牌，一共只有红骨牌10个，黑骨牌10个。现在小明想摆一个长度为5的队列，请问有几种方案？</p>
+</blockquote>
+
+<p>同理可得相应的指数型母函数：</p>
+
+<p>$$G(x)=(1+\frac{x}{1!}+&hellip;+\frac{x^{10}}{10!})^2$$</p>
+
+<p>暴力破解去吧少年&hellip;.可怜的小明，默默地看着弟弟&hellip;无奈地又拿了一张草稿纸继续算&hellip;.</p>
+
+<h3 id="3-强势的母函数之横扫小球模型">3. 强势的母函数之横扫小球模型</h3>
+
+<p>由前面的解题经验我们感受到，母函数天然的运算性质完美了诠释了组合数学中<strong>加法原理</strong>和<strong>乘法原理</strong>的含义，那么，一个自然而然的问题是，能否用母函数来统一解决前面困扰我们许久的8种放球模型呢？下面，我们进行一番尝试。请注意，我们的仍然假设球有n个，盒子有m个。
+<img src="https://aaron-xichen.github.io/posts/cmc1/1421686417439.png" alt="Alt text" /></p>
+
+<h4 id="3-1-球有区别-盒子有区别-有空盒">3.1 球有区别，盒子有区别，有空盒</h4>
+
+<p>首先由于球是有区别的，所以确定使用的是指数型母函数，解决这个问题的一种思路是考虑每个盒子里球的数量，可以取$0, 1, 2, &hellip;, k, &hellip;$，这里为了使用无穷级数的性质，假设可以取正无穷，另外一共有m个盒子，因此我们可以列出以下母函数：</p>
+
+<p>$$G(x)=(1+\frac{x}{1!}+\frac{x^2}{2!}+&hellip;\frac{x^k}{k!}+&hellip;)^m$$</p>
+
+<p>化简然后再无穷级数展开后得到</p>
+
+<p>$$G(x)=\sum_{n=0}^\infty\frac{(mx)^n}{n!}$$</p>
+
+<p>因此$x^n/n!$的系数便是$m^n$，和表中的答案一致。第一个问题比较轻松的就解决了，接下来我们看第二个问题。</p>
+
+<h4 id="3-2-球有区别-盒子有区别-无空盒">3.2 球有区别， 盒子有区别，无空盒</h4>
+
+<p>与3.1问题类似，我们同样可以列出母函数：</p>
+
+<p>$$G(x)=(\frac{x}{1!}+\frac{x^2}{2!}+&hellip;\frac{x^k}{k!}+&hellip;)^m$$</p>
+
+<p>化简得：
+$$G(x)=(e^x-1)^m$$</p>
+
+<p>二项式定理展开，可以得到：</p>
+
+<p>$$G(x)=\sum_{k=0}^\infty C_m^k(-1)^ke^{x(m-k)}$$</p>
+
+<p>将指数项泰勒展开，得到：</p>
+
+<p><code>$$G(x)=\sum_{k=0}^mC_m^k(-1)^k\sum_{p=0}^\infty \frac{(m-k)^px^p}{p!}$$</code></p>
+
+<p>化简得可得到$x^n/n!$的系数为：</p>
+
+<p><code>$$a_n=\sum_{k=0}^m C_m^k(-1)^k(m-k)^n$$</code></p>
+
+<p>完美解决问题</p>
+
+<h4 id="3-3-球有区别-盒子无区别-有空盒">3.3 球有区别，盒子无区别，有空盒</h4>
+
+<p>在3.4的基础上（见下），为了解决这个问题，枚举所有情况为有1个空盒，有2个空盒，&hellip;，有m个空盒，假设$n \geq m$，可以得到：</p>
+
+<p>$$S(n,1)+S(n,2)+&hellip;+S(n,m)$$</p>
+
+<h4 id="3-4-球有区别-盒子无区别-无空盒">3.4 球有区别，盒子无区别，无空盒</h4>
+
+<p>易知此为第二类Stirlig数$S(n,m)$，由3.2求得的答案可得：</p>
+
+<p><code>$$S(n,m)=\frac{a_n}{m!}=\frac{1}{m!}\sum_{k=0}^m C_m^k(-1)^k(m-k)^n$$</code></p>
+
+<h4 id="3-5-球无区别-盒子有区别-有空盒">3.5 球无区别，盒子有区别，有空盒</h4>
+
+<p>直接列出母函数：</p>
+
+<p>$$G(x)=(1+x+x^2+&hellip;+x^k+&hellip;)^m$$</p>
+
+<p>利用无穷等比级数公式，可以得到：</p>
+
+<p>$$G(x)=\frac{1}{(1-x)^m}$$</p>
+
+<p>利用广义二项式定理，可得：</p>
+
+<p><code>$$a_n=C_{n+m-1}^n$$</code></p>
+
+<h4 id="3-6-球无区别-盒子有区别-无空盒">3.6 球无区别，盒子有区别，无空盒</h4>
+
+<p>母函数为：</p>
+
+<p>$$G(x)=(x+x^2+&hellip;+x^k+&hellip;)^m$$</p>
+
+<p>得到：
+$$G(x)=\frac{x^m}{(1-x)^m}$$</p>
+
+<p>对比3.5可知只需要将n换成n-m即可，代入得：</p>
+
+<p><code>$$a_n=C_{n-m+m-1}^{n-m}=C_{n-1}^{n-m}=C_{n-1}^{m-1}$$</code></p>
+
+<h4 id="3-7-球无区别-盒子无区别-有空盒">3.7 球无区别，盒子无区别，有空盒</h4>
+
+<p>这种情况复杂许多，乍看像<strong>整数拆分</strong>问题，但是略有不同，这里限制了拆分后数字的个数，即相当于问：</p>
+
+<blockquote>
+<p>Q12: 把n拆分成最多m个数的和的拆分数是多少?</p>
+</blockquote>
+
+<p>首先不加证明地利用<strong>Ferrers</strong>图像中的推论将Q12转换为等价问题：</p>
+
+<blockquote>
+<p>Q13: 将n拆分成最大数不超过m的拆分数是多少？</p>
+</blockquote>
+
+<p>这样的话，再利用母函数，由于盒子无区别，不能再像前面的思路去思考每个盒子里有多少个球，取而代之的，应该从整体上思考有k个球的盒子有多少个。显而易见的，恰好有k个球的盒子数量可以是0个，1个，&hellip;.，无穷个，因此可以得到母函数的每一项为：</p>
+
+<p>$$1+x^k+x^{2k}+&hellip;+x^{pk}+&hellip;$$</p>
+
+<p>又由于k的取值可以从1到m，因此得到母函数为：</p>
+
+<p>$$G(x)=(1+x+x^2+&hellip;)(1+x^2+x^4+&hellip;)&hellip;(1+x^m+x^{2m}+&hellip;)$$</p>
+
+<p>化简得：</p>
+
+<p>$$G(x)=\frac{1}{(1-x)(1-x^2)&hellip;(1-x^m)}$$</p>
+
+<p>只需要把其中$x^n$的系数提取出来即可，呵呵&hellip;.</p>
+
+<h4 id="3-8-球无区别-盒子有区别-无空盒">3.8 球无区别，盒子有区别，无空盒</h4>
+
+<p>与3.7类似，可得到母函数：</p>
+
+<p>$$G(x)=(x+x^2+&hellip;)(x^2+x^4+&hellip;)&hellip;(x^m+x^{2m}+&hellip;)$$</p>
+
+<p>化简得：</p>
+
+<p>$$G(x)=\frac{x^m}{(1-x)(1-x^2)&hellip;(1-x^m)}$$</p>
+
+<p>只需要把$G(x)$中$x^n$的系数提取出来即可，又呵呵&hellip;.</p>
+
+<h3 id="4-中场小结">4. 中场小结</h3>
+
+<p>母函数真不愧如母亲一般有博大的胸怀，包容一切，拥抱一切，有位著名的数学家曾经说过*“母函数就是挂衣架”*。的确，有了母函数，我们可以非常自如地把方案数挂在母函数上，做着我们熟悉的四则运算，答案慢慢就自然浮现出来&hellip;.</p>
+
+<p>研究完了传统的排列组合问题，接下来，我们将会转换思路，用其他更加巧妙的方法侧击旁敲把答案给慢慢逼出来，欲知详情，不要走开，广告回来继续分解。</p>
+
+
+
+    
+        <div class="social">
+  
+    <div>
+        <a href="mailto:aaron.xichen@gmail.com">Email</a>
+    </div>
+  
+    <div>
+        <a href="https://github.com/aaron-xichen/">Github</a>
+    </div>
+  
+    <div>
+        <a href="https://www.zhihu.com/people/aaronxic/activities">Zhihu</a>
+    </div>
+  
+</div>
+
+
+
+    
+  </div>
+
+  
+
+
+
+<div id="sidebar">
+  
+  <a href="https://aaron-xichen.github.io/img/head.jpg" class="image-link">
+    <img class="logo animated flipInY" src="https://aaron-xichen.github.io/img/head.jpg"/>
+  </a>
+  
+
+  <h2>URLs</h2>
+  <ul>
+    
+      <li><a href="https://aaron-xichen.github.io/">Home</a></li>
+    
+      <li><a href="https://aaron-xichen.github.io/all/">All Articles</a></li>
+    
+  </ul>
+
+  <h2>Recent posts</h2>
+  <ul>
+    
+      
+        <li><a href="https://aaron-xichen.github.io/posts/cmc1/">Combinatorial Mathematics Cookbook (I) </a></li>
+      
+    
+      
+        <li><a href="https://aaron-xichen.github.io/posts/cmc2/">Combinatorial Mathematics Cookbook (II) </a></li>
+      
+    
+  </ul>
+
+  <h2>Projects</h2>
+  <ul>
+    
+      <li><a href="https://github.com/aaron-xichen/pytorch-playground" target="_blank">pytorch-playground</li>
+    
+  </ul>
+</div>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src=https://aaron-xichen.github.io/js/jquery-1.11.2.min.js></script>
+  <script src=https://aaron-xichen.github.io/js/main.js></script>
+
+  
+  <script src=https://aaron-xichen.github.io/js/jquery.magnific-popup.min.js></script>
+
+  
+  
+
+  
+</body>
+</html>
+
